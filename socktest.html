@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="js/SocketConn.js"></script>
+        <script>
+            var conn = new SocketConn(), session_id;
+
+            $(function () {
+                $('#init').click(function () {
+                    conn.init();
+                    conn.handlers.joined_session_after = function (data) {
+                        console.log(data);
+                    }
+                    conn.handlers.new_session = function (data) {
+                        session_id = data.session_id;
+                        console.log(data);
+                    }
+
+                    conn.handlers.get_sessions = function (data) {
+                        console.log(data);
+                        if (data.length!=0) {
+                            $('#session-id').val(data[0].session_id);
+                        }
+                    };
+                });
+
+                $('#create-session').click(function () {
+                    conn.send({"type": "new_session", "name": "test session"});
+                });
+
+                $('#join-session').click(function () {
+                    conn.send({
+                        'type': 'join_session',
+                        'session_id': session_id,
+                        'player': 'test'
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div>
+            <button id="init">Init</button>
+        </div>
+        <div>
+            <button id="create-session">Create test session</button>
+        </div>
+        <div>
+            <input id="session-id" />
+            <button id="join-session">Join test session</button>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,31 @@
+{
+    "test_dude": {
+        "name": "Test Dude",
+        "spritemap": "assets/textures/run.png",
+        "tiles_n_x": 10,
+        "tiles_n_y": 1,
+        "facing": "left",
+        "animations": {
+            "jump": {
+                "start_tile": 4,
+                "end_tile": 5,
+                "interval": 100
+            },
+            "stop_movement": {
+                "start_tile": 4,
+                "end_tile": 5,
+                "interval": 100
+            },
+            "idle": {
+                "start_tile": 4,
+                "end_tile": 5,
+                "interval": 100
+            },
+            "move": {
+                "start_tile": 0,
+                "end_tile": 10,
+                "interval": 100
+            }
+        }
+    }
+}

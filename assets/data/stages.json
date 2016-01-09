@@ -1,0 +1,11 @@
+{
+    "test_arena": {
+        "background": "assets/textures/background.png",
+        "box": {
+            "top": 0,
+            "left": -375,
+            "right": 375,
+            "bottom": -145
+        }
+    }
+}
