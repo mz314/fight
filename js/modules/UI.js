@@ -1,6 +1,6 @@
-var UI = function (socket_conn) {
+var UI = function () {
     var self = this;
-    self.socket_conn = socket_conn;
+    self.socket_conn = Factory.get('SocketConn');
     self.init = function () {
         self.socket_conn.handlers['get_sessions'] = function (data) {
             $('#session-list tbody').html('');

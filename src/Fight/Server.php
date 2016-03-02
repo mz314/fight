@@ -19,7 +19,8 @@ class Server implements MessageComponentInterface
     {
         $this->clients        = new \SplObjectStorage;
         $this->connection_ids = [];
-        $this->sessions       = [];
+        $session = new Session('Default session');
+        $this->sessions       = [$session->getSessionId()=>$session];
     }
 
     public function onOpen(ConnectionInterface $conn)

@@ -1,8 +1,14 @@
-var FightEngine = function (socket_conn) {
+var FightEngine = function () {
     var self = this;
     self.width = 800;
     self.height = 600;
-    self.socket_conn = socket_conn;
+    self.socket_conn = Factory.get('SocketConn');
+    self.stage_manager = Factory.get('StageManager');
+    
+    self.initializeSubsystems = function() {
+        self.socket_conn.init();
+        Factory.get('Input');
+    }
     
     self.initHandlers = function () {
         self.socket_conn.handlers.update_player=function(data) {
@@ -10,8 +16,10 @@ var FightEngine = function (socket_conn) {
         };
         
         self.socket_conn.handlers.joined_session_after=function(data) {
-            self.stage_manager.addCharacter(self.stage_manager.character_manager.loadCharacter('test_dude'));
-            self.scene.add(self.stage_manager.characters[0].mesh);
+            player = new Player();
+            player.character = self.stage_manager.character_manager.loadCharacter(player, 'test_dude')
+            self.stage_manager.addPlayer(player);
+            self.scene.add(self.stage_manager.players[0].mesh);
             console.log('joined', data);
             if(data.me=="1") {
                self.stage_manager.player.character_id = data.player_id;
@@ -20,7 +28,7 @@ var FightEngine = function (socket_conn) {
     };
 
     self.init = function () {
-        self.stage_manager = new StageManager(self.socket_conn);
+        self.initializeSubsystems();
         self.initHandlers();
         self.clock = new THREE.Clock();
         self.scene = new THREE.Scene();
@@ -47,8 +55,6 @@ var FightEngine = function (socket_conn) {
 
         stage = self.stage_manager.loadStage('test_arena');
         self.scene.add(stage.background_mesh);
-//        self.stage_manager.addCharacter(self.stage_manager.character_manager.loadCharacter('test_dude'));
-//        self.scene.add(self.stage_manager.characters[0].mesh);
     };
 
     self.onWindowResize = function () {
@@ -65,6 +71,7 @@ var FightEngine = function (socket_conn) {
     self.update = function () {
         var delta = self.clock.getDelta();
         characters = self.stage_manager.characters;
+        
         for (var character in characters) {
             characters[character].animations[characters[character].state.name].animator.update(1000 * delta);
         }

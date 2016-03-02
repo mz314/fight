@@ -1,29 +1,31 @@
 function CharacterManager() {
     var self = this;
 
-    self.characters = [];
+    self.characters_data = [];
+    self.players = [];
 
     self.loadCharactersFile = function () {
         $.ajax({
             url: 'assets/data/characters.json',
             async: false
         }).always(function (data) {
-            self.characters = eval(data);
+            self.characters_data = eval(data);
         });
     };
 
-    self.loadCharacter = function (character_name) {
-
-        var character = self.characters[character_name];
+    self.loadCharacter = function (player, character_name) {
+       
+        var character = self.characters_data[character_name];
         var animations = character.animations;
-        character['velocity'] = new THREE.Vector2(0, 0);
-        character['acceleration'] = new THREE.Vector2(0, -98);
-        character['id']=null;
+//        character['velocity'] = new THREE.Vector2(0, 0);
+//        character['acceleration'] = new THREE.Vector2(0, -98);
+//        character['id']=null;
         character['texture'] = THREE.ImageUtils.loadTexture(character['spritemap']);
-        character['state']={
+        character['state'] = {
             'name': 'idle',
             'params': null
         };
+        
         geometry = new THREE.PlaneGeometry(90, 120, 1, 1);
 
         character['material'] = new THREE.MeshBasicMaterial({
@@ -34,8 +36,9 @@ function CharacterManager() {
             depthTest: false,
             alphaTest: 0.5
         });
-        character['mesh'] = new THREE.Mesh(geometry, character['material']);
-        character.mesh.position.y = -10;
+        
+        player.mesh = new THREE.Mesh(geometry, character['material']);
+        player.mesh.position.y = -10;
 
         for (var animation in animations) {
 
@@ -51,7 +54,7 @@ function CharacterManager() {
 
         }
 
-        self.characters[character_name] = character;
+        self.characters_data[character_name] = character;
 
         return character;
     };

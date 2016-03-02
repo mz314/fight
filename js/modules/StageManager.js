@@ -1,11 +1,11 @@
-StageManager = function (socket_conn) {
+StageManager = function () {
     var self = this;
     
-    self.socket_conn = socket_conn;
+    self.socket_conn = Factory.get('SocketConn');
     self.stages = [];
     self.current = null;
     self.character_manager = new CharacterManager();
-    self.characters = [];
+    self.players = [];
     self.player = [];
 
     self.getPlayerEssential = function () {
@@ -20,9 +20,9 @@ StageManager = function (socket_conn) {
       
     };
 
-    self.addCharacter = function (character) {
-        self.characters.push(character);
-        self.player = character;
+    self.addPlayer = function (player) {
+        self.players.push(player);
+        self.player = player;
     };
 
     self.loadStageFile = function () {
@@ -99,8 +99,8 @@ StageManager = function (socket_conn) {
     };
 
     self.updatePositions = function (delta) {
-        for (var character_i in self.characters) {
-            var character = self.characters[character_i];
+        for (var character_i in self.players) {
+            var character = self.players[character_i];
             next_position = new THREE.Vector3();
             next_position.x = character.mesh.position.x + character.velocity.x * delta;
             next_position.y = character.mesh.position.y + character.velocity.y * delta;

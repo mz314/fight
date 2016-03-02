@@ -2,25 +2,50 @@
     <head>
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
         <script src="bower_components/three.js/three.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        
+        <script src="js/classes/Player.js"></script>
+        
+        <script src="js/modules/CharacterManager.js"></script>
+        <script src="js/modules/StageManager.js"></script>
+        <script src="js/modules/Input.js"></script>
+        <script src="js/modules/SocketConn.js"></script>
+        <script src="js/modules/UI.js"></script>
+        <script src="js/modules/FightEngine.js"></script>
+        
         <script src="js/TextureAnimator.js"></script>
-        <script src="js/CharacterManager.js"></script>
-        <script src="js/StageManager.js"></script>
-        <script src="js/Input.js"></script>
-        <script src="js/SocketConn.js"></script>
-        <script src="js/UI.js"></script>
-        <script src="js/FightEngine.js"></script>
-        <script src="js/main.js"></script>
+        
+        <script src="js/Factory.js"></script>
+        <script>
+            $(function () {
+                player = new Player();
+                console.log('Player',  player);
+                var ui = Factory.get('UI');
+                var engine = Factory.get('FightEngine');
+                ui.init();
+                engine.init();
+                engine.animate();
+            });
+        </script>
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
         <table id="session-list">
+            <tbody>
+
+            </tbody>
+        </table>
+        <table id="player-list">
             <tbody>
                 
             </tbody>
         </table>
         <form id="session-form">
             Player Name: <input id="player-name" /><br/>
+            <input type="submit" id="register-player" value="Register player" />
             Session Name: <input id="session-name" />
-            <input type="submit" value="Add session" />
+            <input type="submit" id="add-session" value="Add session" />
         </form>
         <div id="container"></div>
     </body>
