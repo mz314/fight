@@ -1,3 +1,7 @@
 /*#container {
     display: none;
 }*/
+
+table thead tr.template-row {
+    display: none;
+}

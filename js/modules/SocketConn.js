@@ -29,6 +29,9 @@ function SocketConn() {
         },
         'update_player': function (data) {
 
+        },
+        'get_players': function (data) {
+            
         }
     };
 
@@ -45,6 +48,7 @@ function SocketConn() {
             socket.onopen = function (msg) {
                 console.log("Welcome - status " + this.readyState);
                 socket.send(JSON.stringify({"type": "get_sessions"}));
+                socket.send(JSON.stringify({"type": "get_players"}));
             };
             socket.onmessage = function (msg) {
                 //console.log("Received: " + msg.data);

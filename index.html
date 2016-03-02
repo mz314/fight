@@ -31,21 +31,64 @@
         <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <table id="session-list">
+        <table id="session-list" class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Connected players
+                    </th>
+                    <th>
+                        &nbsp;
+                    </th>
+                </tr>
+                <tr class="template-row">
+                    <td>
+                        [[name]]
+                    </td>
+                    <td>
+                        [[session_idname]]
+                    </td>
+                    <td>
+                        [[players]]
+                    </td>
+                    <td>
+                        <a href="[[session_id]]">Join</a>
+                    </td>
+                </tr>
+            </thead>
             <tbody>
-
+                
             </tbody>
         </table>
         <table id="player-list">
+            <thead>
+                <tr class="template-row">
+                    <td>
+                        [[name]]
+                    </td>
+                    <td>
+                        [[character]]
+                    </td>
+                    <td>
+                        [[id]]
+                    </td>
+                </tr>
+            </thead>
             <tbody>
                 
             </tbody>
         </table>
         <form id="session-form">
             Player Name: <input id="player-name" /><br/>
-            <input type="submit" id="register-player" value="Register player" />
+            <input type="button" id="register-player" value="Register player" />
             Session Name: <input id="session-name" />
-            <input type="submit" id="add-session" value="Add session" />
+            <input type="button" id="add-session" value="Add session" />
         </form>
         <div id="container"></div>
     </body>

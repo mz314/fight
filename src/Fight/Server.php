@@ -7,20 +7,34 @@ use Ratchet\ConnectionInterface;
 
 class Server implements MessageComponentInterface
 {
+
     const
         BCAST_SENDER = 0,
         BCAST_CONNECTIONS = 1,
         BCAST_PLAYERS = 2
 
     ;
-    protected $clients, $sessions, $connection_ids;
+
+    protected $clients, $sessions, $connection_ids, $players;
 
     public function __construct()
     {
-        $this->clients        = new \SplObjectStorage;
+        $this->clients = new \SplObjectStorage;
         $this->connection_ids = [];
         $session = new Session('Default session');
-        $this->sessions       = [$session->getSessionId()=>$session];
+        $this->sessions = [$session->getSessionId() => $session];
+        $this->players = [];
+    }
+
+    protected function getPlayersData()
+    {
+        $data = [];
+
+        foreach ($this->players as $player) {
+            $data[] = $player->getData();
+        }
+
+        return $data;
     }
 
     public function onOpen(ConnectionInterface $conn)
@@ -51,19 +65,31 @@ class Server implements MessageComponentInterface
     public function onMessage(ConnectionInterface $from, $msg)
     {
         // var_dump($msg);
-        $data         = json_decode($msg);
-        $result       = new \stdClass;
+        $data = json_decode($msg);
+        $result = new \stdClass;
         $result->type = $data->type;
 
         switch ($data->type) {
             case 'new_session':
-                $session                                  = new Session($data->name);
+                $session = new Session($data->name);
                 $this->sessions[$session->getSessionId()] = $session;
-                $result->output                           = ['session_id' => $session->getSessionId()];
+                $result->output = ['session_id' => $session->getSessionId()];
                 foreach ($this->clients as $connection) {
-                    $this->onMessage($connection,
-                        json_encode(['type' => 'get_sessions']));
+                    $this->onMessage($connection, json_encode(['type' => 'get_sessions']));
                 }
+                break;
+
+            case 'new_player':
+                $player = new Player($data->player, 'test_dude', $from);
+                
+                foreach($this->players as $player) {
+                    $this->onMessage($connection, json_encode(['type'=>'get_players']));
+                }
+                
+                return;
+
+            case 'get_players':
+                $result->output = $this->getPlayersData();
                 break;
 
             case 'get_sessions':
@@ -77,16 +103,15 @@ class Server implements MessageComponentInterface
 
 
             case 'join_session':
-                $player                            = new Player($data->player,
-                    'test_dude', $from);
-                $session                           = $this->sessions[$data->session_id];
+                $player = new Player($data->player, 'test_dude', $from);
+                $session = $this->sessions[$data->session_id];
                 $session->addPlayer($player, $from->resourceId);
                 $this->sessions[$data->session_id] = $session;
-                $result->output                    = [
+                $result->output = [
                     'session_id' => $data->session_id,
                     'player_id' => $player->getId()
                 ];
-                $result->type                      = 'joined_session';
+                $result->type = 'joined_session';
 
                 foreach ($this->clients as $client) {
                     if ($from == $client) {
@@ -100,7 +125,7 @@ class Server implements MessageComponentInterface
                 return;
             //break;
             case 'update_player':
-                $session        = $this->sessions[$data->session_id];
+                $session = $this->sessions[$data->session_id];
                 $result->output = $data;
                 foreach ($this->clients as $client) {
                     $client->send(json_encode($result));
@@ -119,6 +144,6 @@ class Server implements MessageComponentInterface
 
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
-
+        
     }
 }
