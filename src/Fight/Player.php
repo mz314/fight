@@ -2,17 +2,23 @@
 
 namespace Fight;
 
-class Player
+class Player implements SerializableInterface
 {
-
-    protected $name, $character, $data, $id, $connection; //data from character json object in JS script
+    protected
+        $name,
+        $character,
+        $data, $id,
+        $connection,
+        $state
+    ;
 
     public function __construct($name, $character, $connection)
     {
-        $this->id = md5(microtime());
-        $this->name = $name;
-        $this->character = $character;
+        $this->id         = md5(microtime());
+        $this->name       = $name;
+        $this->character  = $character;
         $this->connection = $connection;
+        $this->state      = new PlayerState();
     }
 
     public function getId()
@@ -30,8 +36,14 @@ class Player
         return [
             'name' => $this->name,
             'id' => $this->id,
-            'character' => $this->character
+            'character' => $this->character,
+            'state' => $this->state->getData(),
         ];
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function getName()

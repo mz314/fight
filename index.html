@@ -66,8 +66,19 @@
                 
             </tbody>
         </table>
-        <table id="player-list">
+        <table id="player-list" class="table">
             <thead>
+                <tr>
+                    <th>
+                        Player name
+                    </th>
+                    <th>
+                        Character
+                    </th>
+                    <th>
+                        ID
+                    </th>
+                </tr>
                 <tr class="template-row">
                     <td>
                         [[name]]
@@ -85,8 +96,8 @@
             </tbody>
         </table>
         <form id="session-form">
-            Player Name: <input id="player-name" /><br/>
-            <input type="button" id="register-player" value="Register player" />
+            Player Name: <input id="player-name" />
+            <input type="button" id="register-player" value="Register player" /><br />
             Session Name: <input id="session-name" />
             <input type="button" id="add-session" value="Add session" />
         </form>

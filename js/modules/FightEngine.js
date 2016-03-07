@@ -4,25 +4,30 @@ var FightEngine = function () {
     self.height = 600;
     self.socket_conn = Factory.get('SocketConn');
     self.stage_manager = Factory.get('StageManager');
-    
-    self.initializeSubsystems = function() {
+
+    self.initializeSubsystems = function () {
         self.socket_conn.init();
         Factory.get('Input');
     }
-    
+
     self.initHandlers = function () {
-        self.socket_conn.handlers.update_player=function(data) {
+
+        self.socket_conn.handlers.new_player = function (data) {
+            self.stage_manager.player = new Player(data.player.id, data.player.name);
+            self.stage_manager.addPlayer(player);
+            player.character = self.stage_manager.character_manager.loadCharacter(player, 'test_dude');
+        };
+
+        self.socket_conn.handlers.update_player = function (data) {
             console.log('update', data);
         };
-        
-        self.socket_conn.handlers.joined_session_after=function(data) {
-            player = new Player();
-            player.character = self.stage_manager.character_manager.loadCharacter(player, 'test_dude')
-            self.stage_manager.addPlayer(player);
+
+        self.socket_conn.handlers.joined_session_after = function (data) {
+
             self.scene.add(self.stage_manager.players[0].mesh);
             console.log('joined', data);
-            if(data.me=="1") {
-               self.stage_manager.player.character_id = data.player_id;
+            if (data.me == "1") {
+                self.stage_manager.player.character_id = data.player_id;
             }
         };
     };
@@ -46,6 +51,7 @@ var FightEngine = function () {
         window.addEventListener('resize', function () {
             self.onWindowResize();
         }, false);
+
         self.onWindowResize();
 
         var ambientLight = new THREE.AmbientLight(0xffffff);
@@ -71,7 +77,7 @@ var FightEngine = function () {
     self.update = function () {
         var delta = self.clock.getDelta();
         characters = self.stage_manager.characters;
-        
+
         for (var character in characters) {
             characters[character].animations[characters[character].state.name].animator.update(1000 * delta);
         }

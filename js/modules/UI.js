@@ -33,7 +33,7 @@ var UI = function () {
                     'players': this.count
                 });
 
-                $(tbody).append(html);
+                $(tbody).append('<tr>'+html+'</tr>');
             });
 
         };
@@ -51,7 +51,7 @@ var UI = function () {
                     'id': this.id
                 });
 
-                $(tbody).append(html);
+                $(tbody).append('<tr>'+html+'</tr>');
             });
         };
 
@@ -62,6 +62,7 @@ var UI = function () {
         });
 
         $('#session-form').on('click', '#register-player', function (e) {
+            console.log('register click');
             e.preventDefault();
             self.socket_conn.send({
                 "type": "new_player",

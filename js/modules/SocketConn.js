@@ -6,6 +6,7 @@ function SocketConn() {
     self.socket = null;
     self.session_id = null;
     self.send = function (data) {
+        data.timestamp = new Date().getTime();
         self.socket.send(JSON.stringify(data));
     };
 
@@ -21,7 +22,6 @@ function SocketConn() {
         },
         'joined_session': function (data) {
             self.session_id = data.session_id;
-            console.log('player', data);
             self.handlers.joined_session_after(data);
         },
         'joined_session_after': function (data) {
@@ -31,6 +31,9 @@ function SocketConn() {
 
         },
         'get_players': function (data) {
+            
+        },
+        'new_player': function (data) {
             
         }
     };
