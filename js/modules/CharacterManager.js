@@ -54,7 +54,7 @@ function CharacterManager() {
 
         }
 
-        self.characters_data[character_name] = character;
+        //self.characters_data[character_name] = character;
 
         return character;
     };

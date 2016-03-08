@@ -4,71 +4,62 @@ var Input = function () {
     self.stage_manager = Factory.get('StageManager');
     self.socket_conn = Factory.get('SocketConn');
     self.speed = 60;
-    self.keystates = self.prev_keystates = {};
+    self.keystates = self.oldkeystates = {};
     self.socket_conn.handlers.update_player = function (data) {
         self.stage_manager.changePlayerState(data.player.state);
     };
 
     self.isStateChanged = function () {
         
+        for(i in self.keystates) {
+            if(self.keystates[i]!=self.oldkeystates[i]) {
+                return true;
+            }
+        }
+        
+        return false;
     };
-    
+
+    self.processKeyChange = function (e, down) {
+        if (self.locked) {
+            return;
+        }
+        self.oldkeystates = $.extend(true, {}, self.keystates);
+        
+        if (down) {
+            self.keystates[e.keyCode] = true;
+        } else {
+            self.keystates[e.keyCode] = false;
+        }
+        
+        if (!self.isStateChanged()) {
+            return;
+        }
+        
+        switch (e.keyCode) {
+            case 65: //A
+                self.socket_conn.sendSession({
+                    type: 'update_player',
+                    player: {'state': {name: 'move', params: 'left', 'down': down}},
+                    player_id: self.stage_manager.player.id
+                });
+                break;
+            case 68: //D
+                self.socket_conn.sendSession({
+                    type: 'update_player',
+                    player: {'state': {name: 'move', params: 'right', 'down': down}},
+                    player_id: self.stage_manager.player.id
+                });
+                break;
+        }
+    };
+
     self.bind = function () {
         $(document).on('keydown', function (e) {
-            if (self.locked) {
-                return;
-            }
-            self.oldkeystates = $.extend(true, {}, self.keystates);
-            self.keystates[e.keyCode] = true;
-
-            var data = {
-                type: 'update_player',
-                'player': null
-            };
-
-            switch (e.keyCode) {
-                case 65: //A
-                    self.socket_conn.sendSession({
-                        type: 'update_player',
-                        player: {'state': {name: 'move', params: 'left'}},
-                        player_id: self.stage_manager.player.id
-                    });
-                    break;
-                case 68: //D
-                    self.socket_conn.sendSession({
-                        type: 'update_player',
-                        player: {'state': {name: 'move', params: 'right'}},
-                        player_id: self.stage_manager.player.id
-                    });
-                    break;
-                case 'w':
-//
-                    break;
-                case 's':
-
-                    break;
-            }
+            self.processKeyChange(e, true);
         }).on('keyup', function (e) {
-            if (self.locked) {
-                return;
-            }
-            self.oldkeystates = $.extend(true, {}, self.keystates);
-            self.keystates[e.keyCode] = false;
-            switch (e.key) {
-                case 's':
-                case 'w':
-                    break;
-                case 'a':
-                case 'd':
-                    self.socket_conn.sendSession({
-                        'type': 'update_player',
-                        'player': {'state': {name: 'stop_movement', params: 'side'}}
-                    });
-                    break;
-            }
+            self.processKeyChange(e, false);
         });
-
-
     };
 
     self.bind();

@@ -6,19 +6,42 @@ use Nubs\Vectorix\Vector;
 
 class PlayerState implements SerializableInterface
 {
-    protected $speed, $acceleration, $position, $lastTimestamp;
+    protected $velocity, $acceleration, $position, $lastTimestamp, $processor;
 
     public function __construct()
     {
         $this->lastTimestamp = 0;
-        $this->speed        = new Vector(['x' => 0, 'y' => 0]);
+        $this->velocity        = new Vector(['x' => 0, 'y' => 0]);
         $this->acceleration = new Vector(['x' => 0, 'y' => 0]);
         $this->position     = new Vector(['x' => 0, 'y' => 0]);
     }
-
-    public function getSpeed()
+    
+    static protected function vectorCompareNull($value, $index, Vector $vector) {
+        if($value===null) {
+            $vector->components()[$index];
+        } else {
+            return $value;
+        }
+    }
+    
+    static protected function vectorSet($x, $y, $vector) {
+        
+    }
+    
+    public function setProcessor(StateProcessor $processor)
     {
-        return $this->speed;
+        $this->processor = $processor;
+        return $this;
+    }
+    
+    public function getProcessor()
+    {
+        return $this->processor;
+    }
+
+    public function getVelocity()
+    {
+        return $this->velocity;
     }
 
     public function getAcceleration()
@@ -31,42 +54,29 @@ class PlayerState implements SerializableInterface
         return $this->position;
     }
 
-    public function setSpeed($speed)
+    public function setVelocity($x, $y)
     {
-        $this->speed = $speed;
+        $this->velocity = new Vector(['x' => $x, 'y' => $y]);
         return $this;
     }
 
-    public function setAcceleration($acceleration)
+    public function setAcceleration($x, $y)
     {
-        $this->acceleration = $acceleration;
+        $this->acceleration = new Vector(['x' => $x, 'y' => $y]);
         return $this;
     }
 
-    public function setPosition($position)
+    public function setPosition($x, $y)
     {
-        $this->position = $position;
+        $this->position = new Vector(['x' => $x, 'y' => $y]);
         return $this;
     }
 
-  
-
-    public function processState($data)
-    {
-        echo "Name {$data->player->state->name}, {$data->player->state->params}, {$data->timestamp} \n";
-
-
-        $timeDiff = $data->timestamp - $this->lastTimestamp;
-
-        switch($data->player->state->name) {
-
-        }
-    }
 
     public function getData()
     {
         return [
-            'speed' => $this->speed->components(),
+            'velocity' => $this->velocity->components(),
             'acceleration' => $this->acceleration->components(),
             'position' => $this->position->components(),
         ];

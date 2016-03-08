@@ -14,22 +14,24 @@ var FightEngine = function () {
 
         self.socket_conn.handlers.new_player = function (data) {
             var player = new Player(data.player.id, data.player.name);
-            self.stage_manager.addPlayer(player, true);
             player.character = self.stage_manager.character_manager.loadCharacter(player, 'test_dude');
-            console.log('pi2', data.player.id);
+            self.stage_manager.addPlayer(player, data.sender);
         };
 
         self.socket_conn.handlers.update_player = function (data) {
             console.log('update', data);
+            p = self.stage_manager.players[data.id];
+            p.velocity.x = data.state.velocity.x;
+            console.log(p.velocity.x);
+            console.log('pos',p.mesh.position.x);
+
         };
 
         self.socket_conn.handlers.joined_session_after = function (data) {
 
-            self.scene.add(self.stage_manager.players[0].mesh);
-            console.log('joined', data);
-            if (data.me == "1") {
-                self.stage_manager.player.character_id = data.player_id;
-            }
+            console.log('join ID', data.player_id, self.stage_manager.players[data.player_id].mesh);
+            self.scene.add(self.stage_manager.players[data.player_id].mesh);
+
         };
     };
 

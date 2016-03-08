@@ -5,7 +5,7 @@ StageManager = function () {
     self.stages = [];
     self.current = null;
     self.character_manager = new CharacterManager();
-    self.players = [];
+    self.players = {};
     self.player = [];
 
     self.getPlayerEssential = function () {
@@ -21,7 +21,7 @@ StageManager = function () {
     };
 
     self.addPlayer = function (player, current_player) {
-        self.players.push(player);
+        self.players[player.id]=player;
         if(current_player) {
             self.player = player;
         }
@@ -59,58 +59,64 @@ StageManager = function () {
     
     self.changePlayerState = function (state) {
 
-        var movement_speed = 100;
-        switch (state.name) {
-            case 'idle':
-                self.player.velocity.x = 0;
-                break;
-            case 'stop_movement':
-                if (state.params == 'side') {
-                    self.changePlayerState({name: 'idle'});
-                }
-                else if (state.params == 'jump') { //&& self.player.state.name!='stop_movement' && self.player.state.params!="jump"
-                    console.log('stop jump');
-
-                    self.player.acceleration.y = -980;
-
-                }
-
-                break;
-            case 'move':
-                if (self.player.state.name == "jump") {
-                    return;
-                }
-                var multipler = 1;
-                if (state.params == 'left') {
-                    multipler = -1;
-
-                }
-
-                if (self.player.facing != state.params) {
-                    self.player['mesh'].scale.x *= -1;
-                    self.player.facing = state.params;
-                }
-                self.player.velocity.x = multipler * movement_speed;
-                break;
-            case 'jump':
-                self.player.acceleration.y = 0;
-                self.player.velocity.y = 200;
-                break;
-
-        }
-        self.player.state = state;
+//        var movement_speed = 100;
+//        switch (state.name) {
+//            case 'idle':
+//                self.player.velocity.x = 0;
+//                break;
+//            case 'stop_movement':
+//                if (state.params == 'side') {
+//                    self.changePlayerState({name: 'idle'});
+//                }
+//                else if (state.params == 'jump') { //&& self.player.state.name!='stop_movement' && self.player.state.params!="jump"
+//                    console.log('stop jump');
+//
+//                    self.player.acceleration.y = -980;
+//
+//                }
+//
+//                break;
+//            case 'move':
+//                
+//                if (self.player.state.name == "jump") {
+//                    return;
+//                }
+//                
+//                var multipler = 1;
+//                if (state.params == 'left') {
+//                    multipler = -1;
+//
+//                }
+//
+//                if (self.player.facing != state.params) {
+//                    self.player['mesh'].scale.x *= -1;
+//                    self.player.facing = state.params;
+//                }
+//                self.player.velocity.x = multipler * movement_speed;
+//                break;
+//            case 'jump':
+//                self.player.acceleration.y = 0;
+//                self.player.velocity.y = 200;
+//                break;
+//
+//        }
+//        self.player.state = state;
     };
+    
+    
 
     self.updatePositions = function (delta) {
         for (var character_i in self.players) {
+    //TODO: store delta on server side
             var character = self.players[character_i];
+            
             next_position = new THREE.Vector3();
             next_position.x = character.mesh.position.x + character.velocity.x * delta;
             next_position.y = character.mesh.position.y + character.velocity.y * delta;
-
+            
             if (next_position.x > self.current.object.box.left && next_position.x < self.current.object.box.right) {
                 character.mesh.position.x = next_position.x;
-                character.velocity.x += character.acceleration.x * delta;
+                //character.velocity.x += character.acceleration.x * delta;
             }
 
             if ((next_position.y < self.current.object.box.top && next_position.y > self.current.object.box.bottom)) {
@@ -119,12 +125,14 @@ StageManager = function () {
             } else {
 
             }
+            
             character.velocity.y += character.acceleration.y * delta;
+            self.players[character_i] = character;
             //console.log(self.player.state.name, self.player.mesh.position.y);
-            if (self.player.mesh.position.y >= -50) {
-                self.player.acceleration.y = -980;
-
-            }
+//            if (self.player.mesh.position.y >= -50) {
+//                self.player.acceleration.y = -980;
+//
+//            }
 
         }
     };

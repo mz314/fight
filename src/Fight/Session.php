@@ -4,14 +4,15 @@ namespace Fight;
 
 class Session implements SerializableInterface
 {
-    protected $name, $players = [], $session_id, $state_processor;
+
+    protected $name, $players = [], $session_id;
 
 //TODO: level_name
     public function __construct($name)
     {
-        $this->name       = $name;
+        $this->name = $name;
         $this->session_id = md5(time());
-        $this->state_processor = new StateProcessor();
+        
     }
 
     public function getData()
@@ -23,11 +24,6 @@ class Session implements SerializableInterface
         ];
     }
 
-    public function getProcessor()
-    {
-        return $this->state_processor;
-    }
-
     public function countPlayers()
     {
         return count($this->players);
@@ -35,6 +31,7 @@ class Session implements SerializableInterface
 
     public function addPlayer(Player $player, $connection_id)
     {
+        $player->getState()->setProcessor(new StateProcessor($player->getState()));
         $this->players[$connection_id] = $player;
     }
 

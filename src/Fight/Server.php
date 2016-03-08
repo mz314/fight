@@ -81,14 +81,18 @@ class Server implements MessageComponentInterface
                 break;
 
             case 'new_player':
+
                 $player = new Player($data->player, 'test_dude', $from);
                 $this->players[$from->resourceId] = $player;
-                $result->output = $data;
-                $result->output->player = $player->getData();
-
-                $from->send(json_encode($result));
-                
                 foreach ($this->clients as $connection) {
+                    $result->output = $data;
+                    $result->output->player = $player->getData();
+
+                    $result->output->sender = ($connection == $from);
+
+                    $connection->send(json_encode($result));
+
+
                     $this->onMessage($connection, json_encode([
                         'type' => 'get_players'
                         ])
@@ -113,7 +117,7 @@ class Server implements MessageComponentInterface
                 break;
 
             case 'join_session':
-                $player = new Player($data->player, 'test_dude', $from);
+                $player = $this->players[$from->resourceId];
                 $session = $this->sessions[$data->session_id];
                 $session->addPlayer($player, $from->resourceId);
                 $this->sessions[$data->session_id] = $session;
@@ -137,10 +141,22 @@ class Server implements MessageComponentInterface
             case 'update_player':
                 $session = $this->sessions[$data->session_id];
                 $result->output = $data;
-                var_dump($data);
 
-                //$session->getProcessor()->processState($data);
-                //get session players and process state here
+                if (array_key_exists($from->resourceId, $this->players)) {
+                    $player = $this->players[$from->resourceId];
+                } else {
+                    $player = null;
+                }
+
+                if (!($player && $player->getState()->getProcessor())) {
+                    return;
+                }
+                
+                $player->getState()->getProcessor()->process($data);
+                $result->output = $player->getData();
+
+
+
 
                 foreach ($this->clients as $client) {
                     $client->send(json_encode($result));
