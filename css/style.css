@@ -5,3 +5,7 @@
 table thead tr.template-row {
     display: none;
 }
+
+tr.me {
+   background-color: yellow;
+}

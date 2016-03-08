@@ -20,9 +20,11 @@ StageManager = function () {
 
     };
 
-    self.addPlayer = function (player) {
+    self.addPlayer = function (player, current_player) {
         self.players.push(player);
-        self.player = player;
+        if(current_player) {
+            self.player = player;
+        }
     };
 
     self.loadStageFile = function () {
@@ -54,6 +56,7 @@ StageManager = function () {
         self.current = stage;
         return stage;
     };
+    
     self.changePlayerState = function (state) {
 
         var movement_speed = 100;

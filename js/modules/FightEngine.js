@@ -13,9 +13,10 @@ var FightEngine = function () {
     self.initHandlers = function () {
 
         self.socket_conn.handlers.new_player = function (data) {
-            self.stage_manager.player = new Player(data.player.id, data.player.name);
-            self.stage_manager.addPlayer(player);
+            var player = new Player(data.player.id, data.player.name);
+            self.stage_manager.addPlayer(player, true);
             player.character = self.stage_manager.character_manager.loadCharacter(player, 'test_dude');
+            console.log('pi2', data.player.id);
         };
 
         self.socket_conn.handlers.update_player = function (data) {

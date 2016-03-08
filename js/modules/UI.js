@@ -1,6 +1,7 @@
 var UI = function () {
     var self = this;
     self.socket_conn = Factory.get('SocketConn');
+    self.stage_manager = Factory.get('StageManager');
 
     self.templatedReplace = function (template, replacements) {
         var html = template;
@@ -33,7 +34,7 @@ var UI = function () {
                     'players': this.count
                 });
 
-                $(tbody).append('<tr>'+html+'</tr>');
+                $(tbody).append('<tr>' + html + '</tr>');
             });
 
         };
@@ -42,16 +43,26 @@ var UI = function () {
             var
                     template_row = $('#player-list thead .template-row').html(),
                     tbody = $('#player-list tbody');
-            console.log(data);
+            
+            $(tbody).html('');
+            
             $(data).each(function () {
-                
+
                 html = self.templatedReplace(template_row, {
                     'name': this.name,
                     'character': this.character,
                     'id': this.id
                 });
 
-                $(tbody).append('<tr>'+html+'</tr>');
+                console.log('pi', self.stage_manager.player);
+
+                if (self.stage_manager.player && self.stage_manager.player.id == this.id) {
+                    html = '<tr class="me">' + html + '</tr>';
+                } else {
+                    html = '<tr>' + html + '</tr>';
+                }
+
+                $(tbody).append(html);
             });
         };
 
