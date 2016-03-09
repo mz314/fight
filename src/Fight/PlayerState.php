@@ -11,29 +11,31 @@ class PlayerState implements SerializableInterface
     public function __construct()
     {
         $this->lastTimestamp = 0;
-        $this->velocity        = new Vector(['x' => 0, 'y' => 0]);
-        $this->acceleration = new Vector(['x' => 0, 'y' => 0]);
-        $this->position     = new Vector(['x' => 0, 'y' => 0]);
+        $this->velocity      = new Vector(['x' => 0, 'y' => 0]);
+        $this->acceleration  = new Vector(['x' => 0, 'y' => 0]);
+        $this->position      = new Vector(['x' => 0, 'y' => 0]);
     }
-    
-    static protected function vectorCompareNull($value, $index, Vector $vector) {
-        if($value===null) {
+
+    static protected function vectorCompareNull($value, $index, Vector $vector)
+    {
+        if ($value === null) {
             $vector->components()[$index];
         } else {
             return $value;
         }
     }
-    
-    static protected function vectorSet($x, $y, $vector) {
+
+    static protected function vectorSet($x, $y, $vector)
+    {
         
     }
-    
+
     public function setProcessor(StateProcessor $processor)
     {
         $this->processor = $processor;
         return $this;
     }
-    
+
     public function getProcessor()
     {
         return $this->processor;
@@ -72,13 +74,19 @@ class PlayerState implements SerializableInterface
         return $this;
     }
 
-
     public function getData()
     {
+        if ($this->processor) {
+            $delta = $this->processor->getDelta();
+        } else {
+            $delta = 0;
+        }
+
         return [
             'velocity' => $this->velocity->components(),
             'acceleration' => $this->acceleration->components(),
             'position' => $this->position->components(),
+            'delta' => $delta,
         ];
     }
 }

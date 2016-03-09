@@ -40,14 +40,13 @@ var Input = function () {
             case 65: //A
                 self.socket_conn.sendSession({
                     type: 'update_player',
-                    player: {'state': {name: 'move', params: 'left', 'down': down}},
-                    player_id: self.stage_manager.player.id
+                    player: {'state': {name: 'move', params: 'left', 'down': down,'delta':self.stage_manager.player.clock.getDelta()}},
                 });
                 break;
             case 68: //D
                 self.socket_conn.sendSession({
                     type: 'update_player',
-                    player: {'state': {name: 'move', params: 'right', 'down': down}},
+                    player: {'state': {name: 'move', params: 'right', 'down': down,'delta':self.stage_manager.player.clock.getDelta()}},
                     player_id: self.stage_manager.player.id
                 });
                 break;

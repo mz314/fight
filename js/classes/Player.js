@@ -7,9 +7,11 @@ var Player = function (id, name) {
     this.id = id;
     this.name = name;
     this.character = null;
+    this.delta = 0;
+    this.clock = new THREE.Clock();
     this.place = function (x, y) {
       this.mesh.position.x = x;  
-      this.mesh.position.y = y;
+      //this.mesh.position.y = y;
     };
     
 

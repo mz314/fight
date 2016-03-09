@@ -19,12 +19,12 @@ var FightEngine = function () {
         };
 
         self.socket_conn.handlers.update_player = function (data) {
-            console.log('update', data);
+            //p.delta = self.clock.getDelta();
             p = self.stage_manager.players[data.id];
             p.velocity.x = data.state.velocity.x;
-            console.log(p.velocity.x);
-            console.log('pos',p.mesh.position.x);
-
+            console.log('data position', data.state.position, p.mesh.position);
+            p.place(data.state.position.x, data.state.position.y);
+            // p.clock = new THREE.Clock();
         };
 
         self.socket_conn.handlers.joined_session_after = function (data) {
@@ -78,14 +78,14 @@ var FightEngine = function () {
     };
 
     self.update = function () {
-        var delta = self.clock.getDelta();
+       
         characters = self.stage_manager.characters;
 
         for (var character in characters) {
             characters[character].animations[characters[character].state.name].animator.update(1000 * delta);
         }
 
-        self.stage_manager.updatePositions(delta);
+        self.stage_manager.updatePositions();
     };
 
     self.animate = function () {

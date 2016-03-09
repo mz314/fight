@@ -104,10 +104,12 @@ StageManager = function () {
     };
     
     
-
-    self.updatePositions = function (delta) {
+    
+    self.updatePositions = function () {
+        engine = Factory.get('FightEngine'), 
+                delta = engine.clock.getDelta();
         for (var character_i in self.players) {
-    //TODO: store delta on server side
+            //TODO: store delta on server side
             var character = self.players[character_i];
             
             next_position = new THREE.Vector3();
@@ -121,12 +123,10 @@ StageManager = function () {
 
             if ((next_position.y < self.current.object.box.top && next_position.y > self.current.object.box.bottom)) {
                 character.mesh.position.y = next_position.y;
-
-            } else {
-
-            }
+            } 
             
             character.velocity.y += character.acceleration.y * delta;
+            
             self.players[character_i] = character;
             //console.log(self.player.state.name, self.player.mesh.position.y);
 //            if (self.player.mesh.position.y >= -50) {

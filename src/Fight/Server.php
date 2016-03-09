@@ -139,6 +139,7 @@ class Server implements MessageComponentInterface
                 return;
 
             case 'update_player':
+                
                 $session = $this->sessions[$data->session_id];
                 $result->output = $data;
 
@@ -154,9 +155,6 @@ class Server implements MessageComponentInterface
                 
                 $player->getState()->getProcessor()->process($data);
                 $result->output = $player->getData();
-
-
-
 
                 foreach ($this->clients as $client) {
                     $client->send(json_encode($result));
