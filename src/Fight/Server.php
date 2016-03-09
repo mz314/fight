@@ -4,7 +4,9 @@ namespace Fight;
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
-
+/*
+ * TODO: convert it back to states from v, a, p vectors
+ */
 class Server implements MessageComponentInterface
 {
 
